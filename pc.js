@@ -5,6 +5,14 @@ class StackMachine {
       this.sp = -1;  // Stack pointer
       this.ip = 0;   // Instruction pointer
     }
+
+    dumpStack(){
+        console.log("Stack Dump:", this.stack)
+    }
+
+    nop(){
+        this.ip++;
+    }
   
     push(value) {
       this.stack[++this.sp] = value;
@@ -29,6 +37,9 @@ class StackMachine {
         const instruction = this.fetch();
         console.log("Running",instruction);
         switch (instruction) {
+          case 0x00:
+           console.log("Start instruction");
+          this.nop();
           case 0x01: // PUSH
             this.push(this.memory[this.ip++]);
             break;
@@ -36,10 +47,12 @@ class StackMachine {
             this.pop();
             break;
           case 0xFF: // HALT
+          console.log("Stop instruction");
+
             running = false;
             break;
           default:
-            console.log("Unknown instruction");
+            console.log("Unknown instruction:",instruction);
         }
       }
     }
@@ -69,12 +82,22 @@ class StackMachine {
     const machine = new StackMachine(256, 128);
     machine.loadProgram(program);
     machine.run();
+    machine.dumpStack();
   }
 
   const assemblyCode = `
 PUSH 10
 PUSH 20
+PUSH 50
+PUSH 4
+PUSH 9
+PUSH 0
+PUSH 78
 POP
+POP
+POP
+POP
+PUSH 4
 HALT
 `;
 
